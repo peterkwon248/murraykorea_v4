@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import json
 import re
 
 # 페이지 기본 설정
@@ -57,8 +58,11 @@ def load_google_sheet(spreadsheet_url):
         scope = ['https://spreadsheets.google.com/feeds',
                 'https://www.googleapis.com/auth/drive']
         
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            'credentials.json', scope)
+        # Streamlit secrets에서 credentials 불러오기
+        credentials_info = st.secrets["credentials"]
+        credentials_dict = json.loads(credentials_info)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            credentials_dict, scope)
         
         gc = gspread.authorize(credentials)
         
